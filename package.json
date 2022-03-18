@@ -1,0 +1,12 @@
+{
+  "name": "json-server-ui",
+  "version": "1.0.0",
+  "description": "Simple GUI for json-server",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx vite"
+  },
+  "keywords": ["json-server"],
+  "author": "YellowDigital.nl",
+  "license": "ISC"
+}

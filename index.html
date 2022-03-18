@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>json-server UI</title>
+
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css"
+      rel="stylesheet"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui"
+    />
+    <!-- Manifest and icons -->
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="icon" type="image/png" href="./images/favicon.png" />
+    <meta name="theme-color" content="#1a237e" />
+    <link rel="apple-touch-icon" sizes="192x192" href="./images/icon-192.png" />
+
+    <!-- Add to homescreen for Chrome on Android. -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Text Edit" />
+  </head>
+  <body>
+    <div id="app">
+      <v-app>
+        <v-footer app> 
+          <v-text-field label="Connected to" v-model="server" clearable placeholder="api endpoint" hide-details></v-text-field>
+          <!-- <v-btn text @click="refresh">connect</v-btn> -->
+        </v-footer>
+
+        <v-main>
+          <v-toolbar flat dark class="indigo">
+            <v-select
+              :items="tree"
+              hide-details
+              placeholder="Select endpoint"
+              style="max-width: 300px"
+              v-model="form.collection"
+            ></v-select>
+
+            <v-spacer></v-spacer>
+
+            <v-btn icon @click="refresh"><v-icon>mdi-refresh</v-icon></v-btn>
+            <v-btn text outlined color="" @click="create({})"
+              >Add new item</v-btn
+            >
+          </v-toolbar>
+
+          <v-container fluid>
+            <v-row>
+              <!-- <v-treeview :items="tree" /> -->
+              <!-- <v-col v-if="!items.length">
+                <v-alert type="info">
+                  No orders yet. Start by promoting your trips
+                </v-alert>
+              </v-col> -->
+              <v-col
+                v-for="(item, index) in items"
+                :key="index"
+                :cols="6"
+                :lg="4"
+                :xs="12"
+              >
+                <v-card>
+                  <textarea style="width:100%;min-height:200px;">{{item}}</textarea>
+                  <!-- <ace-editor-json :value="item"></ace-editor-json> -->
+
+                  <v-card-actions>
+                    <!-- <v-btn text :to="`/trips/${item._id}`">Edit</v-btn> -->
+                    <!-- <v-btn text :to="`/manage/${item._id}`">Manage</v-btn> -->
+                    <v-btn text @click="create({item})"
+                      >Clone</v-btn
+                    >
+                    <!-- <v-btn text @click="patch{item})"
+                    >Save</v-btn
+                  > -->
+                    <v-spacer></v-spacer>
+                    <v-btn color="red" text @click="removeById(item._id)"
+                      >Remove</v-btn
+                    >
+                  </v-card-actions>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-main>
+      </v-app>
+    </div>
+
+    <script type="module">
+      import "https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"
+      import "https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"
+      // import AceEdit from "./packages/ace-edit/index.js"
+      // Vue.use(AceEdit)
+
+      window.app = new Vue({
+        el: "#app",
+        vuetify: new Vuetify(),
+        data: (vm) => ({
+          form: {
+            collection: "",
+          },
+          collections: [],
+          server: "http://localhost:5002",
+        }),
+        computed: {
+          tree: (vm) => {
+            const asTree = Object.entries(vm.collections).map(
+              ([key, value]) => {
+                return {
+                  name: key,
+                  text: key,
+                  id: key,
+                  children: value,
+                };
+              }
+            );
+            return asTree;
+          },
+          items: (vm) => {
+            return vm.collections[vm.form.collection];
+          },
+        },
+        created() {
+          this.refresh = async () => {
+            const resp = await fetch(`${this.server}/db`);
+            this.collections = await resp.json();
+          };
+
+          this.removeById = async (id = "") => {
+            const resp = await fetch(
+              `${this.server}/${this.form.collection}/${id}`,
+              {
+                method: "DELETE",
+              }
+            );
+            this.refresh();
+          };
+
+          this.create = async (form = {}) => {
+            const resp = await fetch(`${this.server}/${this.form.collection}`, {
+              method: "POST",
+              body: JSON.stringify(form),
+            });
+            this.refresh();
+          };
+
+          this.refresh();
+        },
+      });
+
+      // ===
+      // load-sw.js
+      // ===
+      window.addEventListener("load", () => {
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker.register("./sw.js");
+        }
+      });
+    </script>
+  </body>
+</html>
