@@ -32,8 +32,14 @@
   <body>
     <div id="app">
       <v-app>
-        <v-footer app> 
-          <v-text-field label="Connected to" v-model="server" clearable placeholder="api endpoint" hide-details></v-text-field>
+        <v-footer app>
+          <v-text-field
+            label="Connected to"
+            v-model="server"
+            clearable
+            placeholder="api endpoint"
+            hide-details
+          ></v-text-field>
           <!-- <v-btn text @click="refresh">connect</v-btn> -->
         </v-footer>
 
@@ -71,15 +77,15 @@
                 :xs="12"
               >
                 <v-card>
-                  <textarea style="width:100%;min-height:200px;">{{item}}</textarea>
+                  <textarea style="width: 100%; min-height: 200px">
+{{item}}</textarea
+                  >
                   <!-- <ace-editor-json :value="item"></ace-editor-json> -->
 
                   <v-card-actions>
                     <!-- <v-btn text :to="`/trips/${item._id}`">Edit</v-btn> -->
                     <!-- <v-btn text :to="`/manage/${item._id}`">Manage</v-btn> -->
-                    <v-btn text @click="create({item})"
-                      >Clone</v-btn
-                    >
+                    <v-btn text @click="create({item})">Clone</v-btn>
                     <!-- <v-btn text @click="patch{item})"
                     >Save</v-btn
                   > -->
@@ -97,8 +103,8 @@
     </div>
 
     <script type="module">
-      import "https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"
-      import "https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"
+      import "https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js";
+      import "https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js";
       // import AceEdit from "./packages/ace-edit/index.js"
       // Vue.use(AceEdit)
 
@@ -157,10 +163,8 @@
           this.refresh();
         },
       });
-
-      // ===
-      // load-sw.js
-      // ===
+    </script>
+    <script>
       window.addEventListener("load", () => {
         if ("serviceWorker" in navigator) {
           navigator.serviceWorker.register("./sw.js");

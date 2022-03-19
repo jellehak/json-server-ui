@@ -4,7 +4,7 @@
   "description": "Simple GUI for json-server",
   "main": "index.html",
   "scripts": {
-    "start": "npx vite"
+    "start": "npx vite --port 3003"
   },
   "keywords": ["json-server"],
   "author": "YellowDigital.nl",
